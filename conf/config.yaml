@@ -3,7 +3,7 @@ gin:
   port: 8088
 
 db:
-  dsn: snowsa:Snowplus++admin123@tcp(rm-8vbyxzwbos49k5a8wbo.mysql.zhangbei.rds.aliyuncs.com:3306)/cms?charset=utf8mb4&parseTime=True&loc=UTC
+  dsn: snowsa:Snowplus++admin123@tcp(rm-8vbyxzwbos49k5a8wbo.mysql.zhangbei.rds.aliyuncs.com:3306)/monitor?charset=utf8mb4&parseTime=True&loc=UTC
   maxidle: 10
   maxopen: 20
 
