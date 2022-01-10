@@ -1,4 +1,4 @@
-package db
+package model
 
 import (
 	"time"
@@ -8,7 +8,6 @@ import (
 	"xorm.io/core"
 
 	"github.com/zhoubiao2019/monitor-gateway/conf"
-	"github.com/zhoubiao2019/monitor-gateway/model"
 	"github.com/zhoubiao2019/monitor-gateway/util/log"
 )
 
@@ -34,7 +33,7 @@ func InitDB() {
 		log.Fatal(err.Error())
 	}
 
-	err = DBer.Sync2(new(model.Job), new(model.JobLog))
+	err = DBer.Sync2(new(Job), new(JobLog))
 	if err != nil {
 		log.Fatalf("db sync failed:%v", err)
 	}

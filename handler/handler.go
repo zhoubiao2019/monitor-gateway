@@ -1,12 +1,12 @@
 package handler
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/zhoubiao2019/monitor-gateway/db"
-	"github.com/zhoubiao2019/monitor-gateway/util/log"
 	"time"
 
+	"github.com/gin-gonic/gin"
+
 	"github.com/zhoubiao2019/monitor-gateway/model"
+	"github.com/zhoubiao2019/monitor-gateway/util/log"
 )
 
 func RegisterJob(ctx *gin.Context) {
@@ -16,10 +16,7 @@ func RegisterJob(ctx *gin.Context) {
 		return
 	}
 
-	session := db.DBer.NewSession()
-	defer session.Close()
-
-	if err := model.CreateJob(session, job); err != nil {
+	if err := model.CreateJob(job); err != nil {
 		ctx.String(500, "create_job failed,"+err.Error())
 		return
 	}
@@ -33,12 +30,8 @@ func StatusReport(ctx *gin.Context) {
 		return
 	}
 
-	session := db.DBer.NewSession()
-	defer session.Close()
-
 	jobLog.ClientIP = ctx.ClientIP()
-
-	if err := model.CreateJobLog(session, jobLog); err != nil {
+	if err := model.CreateJobLog(jobLog); err != nil {
 		ctx.String(500, "create_job_log failed,"+err.Error())
 		return
 	}
@@ -47,10 +40,7 @@ func StatusReport(ctx *gin.Context) {
 }
 
 func ListJob(ctx *gin.Context) {
-	session := db.DBer.NewSession()
-	defer session.Close()
-
-	list, err := model.GetJobList(session)
+	list, err := model.GetJobList()
 	if err != nil {
 		ctx.String(500, "get_job_list failed")
 		return
@@ -60,10 +50,7 @@ func ListJob(ctx *gin.Context) {
 }
 
 func RefreshJobStatus() {
-	session := db.DBer.NewSession()
-	defer session.Close()
-
-	list, err := model.GetJobList(session)
+	list, err := model.GetJobList()
 	if err != nil {
 		log.Errorw("refresh failed", "err", err.Error())
 		return
@@ -75,7 +62,7 @@ func RefreshJobStatus() {
 		}
 
 		job := &model.Job{ID: job.ID, Status: model.JobStatusUnhealthy}
-		if err := model.UpdateJob(session, job); err != nil {
+		if err := model.UpdateJob(job); err != nil {
 			log.Errorw("update job failed", "err", err.Error())
 		}
 	}

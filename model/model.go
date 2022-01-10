@@ -3,8 +3,6 @@ package model
 import (
 	"fmt"
 	"time"
-
-	"github.com/go-xorm/xorm"
 )
 
 type JobStatus string
@@ -44,25 +42,25 @@ type JobLog struct {
 	CreatedAt time.Time `xorm:"created"`
 }
 
-func CreateJob(session *xorm.Session, job *Job) error {
-	_, err := session.InsertOne(job)
+func CreateJob(job *Job) error {
+	_, err := DBer.InsertOne(job)
 	return err
 }
 
-func UpdateJob(session *xorm.Session, job *Job) error {
-	_, err := session.Table(&Job{}).ID(job.ID).Update(job)
+func UpdateJob(job *Job) error {
+	_, err := DBer.Table(&Job{}).ID(job.ID).Update(job)
 	return err
 }
 
-func GetJobList(session *xorm.Session) ([]*Job, error) {
+func GetJobList() ([]*Job, error) {
 	var list []*Job
-	err := session.Table(&Job{}).Find(&list)
+	err := DBer.Table(&Job{}).Find(&list)
 	return list, err
 }
 
-func GetJobByName(session *xorm.Session, name string) (*Job, error) {
+func GetJobByName(name string) (*Job, error) {
 	job := new(Job)
-	isExist, err := session.Table(&Job{}).Where("name = ?", name).Get(job)
+	isExist, err := DBer.Table(&Job{}).Where("name = ?", name).Get(job)
 	if err != nil {
 		return nil, err
 	}
@@ -73,11 +71,14 @@ func GetJobByName(session *xorm.Session, name string) (*Job, error) {
 	return job, nil
 }
 
-func CreateJobLog(session *xorm.Session, jobLog *JobLog) error {
-	job, err := GetJobByName(session, jobLog.JobName)
+func CreateJobLog(jobLog *JobLog) error {
+	job, err := GetJobByName(jobLog.JobName)
 	if err != nil {
 		return err
 	}
+
+	session := DBer.NewSession()
+	defer session.Close()
 
 	jobLog.JobID = job.ID
 	if _, err = session.InsertOne(jobLog); err != nil {
@@ -91,6 +92,7 @@ func CreateJobLog(session *xorm.Session, jobLog *JobLog) error {
 		param.Status = JobStatusUnhealthy
 	}
 	param.LastScheduleTime = jobLog.ScheduleTime
+	param.LastScheduleID = jobLog.ID
 	param.NextScheduleTime = jobLog.NextScheduleTime
 	if _, err := session.Table(&Job{}).ID(job.ID).Update(param); err != nil {
 		return err

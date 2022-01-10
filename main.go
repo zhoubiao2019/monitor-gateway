@@ -3,14 +3,14 @@ package main
 import (
 	"context"
 	"flag"
-	"github.com/zhoubiao2019/monitor-gateway/db"
-	"github.com/zhoubiao2019/monitor-gateway/handler"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
 
 	"github.com/zhoubiao2019/monitor-gateway/conf"
+	"github.com/zhoubiao2019/monitor-gateway/handler"
+	"github.com/zhoubiao2019/monitor-gateway/model"
 	"github.com/zhoubiao2019/monitor-gateway/router"
 	"github.com/zhoubiao2019/monitor-gateway/util/grace"
 	"github.com/zhoubiao2019/monitor-gateway/util/log"
@@ -21,7 +21,7 @@ func main() {
 	flag.Parse()
 	conf.InitConfig(*confPath)
 	initLogger()
-	db.InitDB()
+	model.InitDB()
 
 	gin.SetMode(conf.GlobalConfig.Gin.Mode)
 	engine := gin.Default()

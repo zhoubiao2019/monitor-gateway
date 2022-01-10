@@ -14,6 +14,11 @@ all: linux_build
 lint:
 	golangci-lint run
 
+# 执行测试
+test:
+	@echo ">> Go test module for handler"
+	go test -v -gcflags=-l $(CURDIR)/handler_test
+
 # 生成可执行文件
 build:
 	go build -o $(GOBIN)/monitor-gateway
