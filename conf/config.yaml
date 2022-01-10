@@ -1,0 +1,14 @@
+gin:
+  mode: debug
+  port:
+
+db:
+  dsn: snowsa:Snowplus++admin123@tcp(rm-8vbyxzwbos49k5a8wbo.mysql.zhangbei.rds.aliyuncs.com:3306)/member_test?charset=utf8mb4&parseTime=True&loc=UTC
+  maxidle: 10
+  maxopen: 20
+
+logger:
+  level: debug
+  fileLog: false
+  path: ./log
+  consoleLog: true
