@@ -43,7 +43,15 @@ type JobLog struct {
 }
 
 func CreateJob(job *Job) error {
-	_, err := DBer.InsertOne(job)
+	isExist, err := DBer.Table(&Job{}).Where("name = ?", job.Name).Exist()
+	if err != nil {
+		return err
+	}
+	if isExist {
+		return fmt.Errorf("job_name repreated")
+	}
+
+	_, err = DBer.InsertOne(job)
 	return err
 }
 
